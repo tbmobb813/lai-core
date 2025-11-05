@@ -56,107 +56,131 @@ export class MessageStore {
     tokensUsed?: number;
     context?: any;
   }): Promise<string> {
-    const id = generateId();
+    try {
+      const id = generateId();
 
-    this.db
-      .prepare(
-        `INSERT INTO messages (id, conversation_id, role, content, timestamp, tokens_used, context)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`
-      )
-      .run(
-        id,
-        data.conversationId,
-        data.role,
-        data.content,
-        data.timestamp,
-        data.tokensUsed || null,
-        JSON.stringify(data.context || null)
-      );
+      this.db
+        .prepare(
+          `INSERT INTO messages (id, conversation_id, role, content, timestamp, tokens_used, context)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`
+        )
+        .run(
+          id,
+          data.conversationId,
+          data.role,
+          data.content,
+          data.timestamp,
+          data.tokensUsed || null,
+          JSON.stringify(data.context || null)
+        );
 
-    // Update conversation's updated_at
-    this.db
-      .prepare('UPDATE conversations SET updated_at = ? WHERE id = ?')
-      .run(data.timestamp, data.conversationId);
+      // Update conversation's updated_at
+      this.db
+        .prepare('UPDATE conversations SET updated_at = ? WHERE id = ?')
+        .run(data.timestamp, data.conversationId);
 
-    return id;
+      return id;
+    } catch (error) {
+      throw new Error(`Failed to create message: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async get(id: string): Promise<Message> {
-    const row = this.db
-      .prepare('SELECT * FROM messages WHERE id = ?')
-      .get(id) as any;
+    try {
+      const row = this.db
+        .prepare('SELECT * FROM messages WHERE id = ?')
+        .get(id) as any;
 
-    if (!row) {
-      throw new Error(`Message ${id} not found`);
+      if (!row) {
+        throw new Error(`Message ${id} not found`);
+      }
+
+      return {
+        id: row.id,
+        conversationId: row.conversation_id,
+        role: row.role,
+        content: row.content,
+        timestamp: row.timestamp,
+        tokensUsed: row.tokens_used,
+        context: row.context ? JSON.parse(row.context) : undefined,
+      };
+    } catch (error) {
+      throw new Error(`Failed to get message: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-
-    return {
-      id: row.id,
-      conversationId: row.conversation_id,
-      role: row.role,
-      content: row.content,
-      timestamp: row.timestamp,
-      tokensUsed: row.tokens_used,
-      context: row.context ? JSON.parse(row.context) : undefined,
-    };
   }
 
   async getByConversation(conversationId: string): Promise<Message[]> {
-    const rows = this.db
-      .prepare(
-        `SELECT * FROM messages 
-         WHERE conversation_id = ? 
-         ORDER BY timestamp ASC`
-      )
-      .all(conversationId) as any[];
+    try {
+      const rows = this.db
+        .prepare(
+          `SELECT * FROM messages 
+           WHERE conversation_id = ? 
+           ORDER BY timestamp ASC`
+        )
+        .all(conversationId) as any[];
 
-    return rows.map(row => ({
-      id: row.id,
-      conversationId: row.conversation_id,
-      role: row.role,
-      content: row.content,
-      timestamp: row.timestamp,
-      tokensUsed: row.tokens_used,
-      context: row.context ? JSON.parse(row.context) : undefined,
-    }));
+      return rows.map(row => ({
+        id: row.id,
+        conversationId: row.conversation_id,
+        role: row.role,
+        content: row.content,
+        timestamp: row.timestamp,
+        tokensUsed: row.tokens_used,
+        context: row.context ? JSON.parse(row.context) : undefined,
+      }));
+    } catch (error) {
+      throw new Error(`Failed to get messages by conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async delete(id: string): Promise<void> {
-    this.db.prepare('DELETE FROM messages WHERE id = ?').run(id);
+    try {
+      this.db.prepare('DELETE FROM messages WHERE id = ?').run(id);
+    } catch (error) {
+      throw new Error(`Failed to delete message: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async deleteByConversation(conversationId: string): Promise<void> {
-    this.db
-      .prepare('DELETE FROM messages WHERE conversation_id = ?')
-      .run(conversationId);
+    try {
+      this.db
+        .prepare('DELETE FROM messages WHERE conversation_id = ?')
+        .run(conversationId);
+    } catch (error) {
+      throw new Error(`Failed to delete messages by conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async search(query: string, conversationId?: string): Promise<Message[]> {
-    let sql = `
-      SELECT m.* FROM messages m
-      JOIN messages_fts fts ON m.id = fts.id
-      WHERE messages_fts MATCH ?
-    `;
-    const params: any[] = [query];
+    try {
+      let sql = `
+        SELECT m.* FROM messages m
+        JOIN messages_fts fts ON m.id = fts.id
+        WHERE messages_fts MATCH ?
+      `;
+      const params: any[] = [query];
 
-    if (conversationId) {
-      sql += ' AND m.conversation_id = ?';
-      params.push(conversationId);
+      if (conversationId) {
+        sql += ' AND m.conversation_id = ?';
+        params.push(conversationId);
+      }
+
+      sql += ' ORDER BY rank';
+
+      const rows = this.db.prepare(sql).all(...params) as any[];
+
+      return rows.map(row => ({
+        id: row.id,
+        conversationId: row.conversation_id,
+        role: row.role,
+        content: row.content,
+        timestamp: row.timestamp,
+        tokensUsed: row.tokens_used,
+        context: row.context ? JSON.parse(row.context) : undefined,
+      }));
+    } catch (error) {
+      throw new Error(`Failed to search messages: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-
-    sql += ' ORDER BY rank';
-
-    const rows = this.db.prepare(sql).all(...params) as any[];
-
-    return rows.map(row => ({
-      id: row.id,
-      conversationId: row.conversation_id,
-      role: row.role,
-      content: row.content,
-      timestamp: row.timestamp,
-      tokensUsed: row.tokens_used,
-      context: row.context ? JSON.parse(row.context) : undefined,
-    }));
   }
 
   close(): void {

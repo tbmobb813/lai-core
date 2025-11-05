@@ -56,7 +56,11 @@ export class GeminiProvider implements Provider {
     };
   }
 
-  async *stream(options: ProviderCompletionOptions): AsyncGenerator<string> {
+  async stream(options: ProviderCompletionOptions): Promise<AsyncGenerator<string>> {
+    return this.streamGenerator(options);
+  }
+
+  private async *streamGenerator(options: ProviderCompletionOptions): AsyncGenerator<string> {
     const model = options.model || this.currentModel;
     const response = await fetch(
       `${this.baseUrl}/models/${model}:streamGenerateContent?key=${this.apiKey}`,

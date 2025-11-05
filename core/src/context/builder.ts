@@ -57,7 +57,7 @@ export class ContextBuilder {
     return this;
   }
 
-  build(): AIContext {
+  async build(): Promise<AIContext> {
     return this.context;
   }
 

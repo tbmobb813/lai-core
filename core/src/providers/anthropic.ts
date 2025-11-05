@@ -52,7 +52,11 @@ export class AnthropicProvider implements Provider {
     };
   }
 
-  async *stream(options: ProviderCompletionOptions): AsyncGenerator<string> {
+  async stream(options: ProviderCompletionOptions): Promise<AsyncGenerator<string>> {
+    return this.streamGenerator(options);
+  }
+
+  private async *streamGenerator(options: ProviderCompletionOptions): AsyncGenerator<string> {
     const response = await fetch(`${this.baseUrl}/messages`, {
       method: 'POST',
       headers: {

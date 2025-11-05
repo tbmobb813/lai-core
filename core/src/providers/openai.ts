@@ -50,7 +50,11 @@ export class OpenAIProvider implements Provider {
     };
   }
 
-  async *stream(options: ProviderCompletionOptions): AsyncGenerator<string> {
+  async stream(options: ProviderCompletionOptions): Promise<AsyncGenerator<string>> {
+    return this.streamGenerator(options);
+  }
+
+  private async *streamGenerator(options: ProviderCompletionOptions): AsyncGenerator<string> {
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {

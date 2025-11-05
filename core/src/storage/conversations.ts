@@ -53,120 +53,144 @@ export class ConversationStore {
     model: string;
     metadata?: Record<string, any>;
   }): Promise<string> {
-    const id = generateId();
-    const now = Date.now();
+    try {
+      const id = generateId();
+      const now = Date.now();
 
-    this.db
-      .prepare(
-        `INSERT INTO conversations (id, title, created_at, updated_at, provider, model, metadata)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`
-      )
-      .run(
-        id,
-        data.title,
-        now,
-        now,
-        data.provider,
-        data.model,
-        JSON.stringify(data.metadata || {})
-      );
+      this.db
+        .prepare(
+          `INSERT INTO conversations (id, title, created_at, updated_at, provider, model, metadata)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`
+        )
+        .run(
+          id,
+          data.title,
+          now,
+          now,
+          data.provider,
+          data.model,
+          JSON.stringify(data.metadata || {})
+        );
 
-    return id;
+      return id;
+    } catch (error) {
+      throw new Error(`Failed to create conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async get(id: string): Promise<Conversation> {
-    const row = this.db
-      .prepare('SELECT * FROM conversations WHERE id = ?')
-      .get(id) as any;
+    try {
+      const row = this.db
+        .prepare('SELECT * FROM conversations WHERE id = ?')
+        .get(id) as any;
 
-    if (!row) {
-      throw new Error(`Conversation ${id} not found`);
+      if (!row) {
+        throw new Error(`Conversation ${id} not found`);
+      }
+
+      return {
+        id: row.id,
+        title: row.title,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+        provider: row.provider,
+        model: row.model,
+        messages: [], // Messages loaded separately
+        metadata: JSON.parse(row.metadata || '{}'),
+      };
+    } catch (error) {
+      throw new Error(`Failed to get conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-
-    return {
-      id: row.id,
-      title: row.title,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      provider: row.provider,
-      model: row.model,
-      messages: [], // Messages loaded separately
-      metadata: JSON.parse(row.metadata || '{}'),
-    };
   }
 
   async update(id: string, data: Partial<{ title: string; metadata: Record<string, any> }>): Promise<void> {
-    const updates: string[] = [];
-    const values: any[] = [];
+    try {
+      const updates: string[] = [];
+      const values: any[] = [];
 
-    if (data.title !== undefined) {
-      updates.push('title = ?');
-      values.push(data.title);
+      if (data.title !== undefined) {
+        updates.push('title = ?');
+        values.push(data.title);
+      }
+
+      if (data.metadata !== undefined) {
+        updates.push('metadata = ?');
+        values.push(JSON.stringify(data.metadata));
+      }
+
+      updates.push('updated_at = ?');
+      values.push(Date.now());
+
+      values.push(id);
+
+      this.db
+        .prepare(`UPDATE conversations SET ${updates.join(', ')} WHERE id = ?`)
+        .run(...values);
+    } catch (error) {
+      throw new Error(`Failed to update conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
-
-    if (data.metadata !== undefined) {
-      updates.push('metadata = ?');
-      values.push(JSON.stringify(data.metadata));
-    }
-
-    updates.push('updated_at = ?');
-    values.push(Date.now());
-
-    values.push(id);
-
-    this.db
-      .prepare(`UPDATE conversations SET ${updates.join(', ')} WHERE id = ?`)
-      .run(...values);
   }
 
   async delete(id: string): Promise<void> {
-    this.db.prepare('DELETE FROM conversations WHERE id = ?').run(id);
+    try {
+      this.db.prepare('DELETE FROM conversations WHERE id = ?').run(id);
+    } catch (error) {
+      throw new Error(`Failed to delete conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async list(options?: { limit?: number; offset?: number }): Promise<Conversation[]> {
-    const limit = options?.limit || 50;
-    const offset = options?.offset || 0;
+    try {
+      const limit = options?.limit || 50;
+      const offset = options?.offset || 0;
 
-    const rows = this.db
-      .prepare(
-        `SELECT * FROM conversations 
-         ORDER BY updated_at DESC 
-         LIMIT ? OFFSET ?`
-      )
-      .all(limit, offset) as any[];
+      const rows = this.db
+        .prepare(
+          `SELECT * FROM conversations 
+           ORDER BY updated_at DESC 
+           LIMIT ? OFFSET ?`
+        )
+        .all(limit, offset) as any[];
 
-    return rows.map(row => ({
-      id: row.id,
-      title: row.title,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      provider: row.provider,
-      model: row.model,
-      messages: [],
-      metadata: JSON.parse(row.metadata || '{}'),
-    }));
+      return rows.map(row => ({
+        id: row.id,
+        title: row.title,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+        provider: row.provider,
+        model: row.model,
+        messages: [],
+        metadata: JSON.parse(row.metadata || '{}'),
+      }));
+    } catch (error) {
+      throw new Error(`Failed to list conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async search(query: string): Promise<Conversation[]> {
-    const rows = this.db
-      .prepare(
-        `SELECT c.* FROM conversations c
-         JOIN conversations_fts fts ON c.id = fts.id
-         WHERE conversations_fts MATCH ?
-         ORDER BY rank`
-      )
-      .all(query) as any[];
+    try {
+      const rows = this.db
+        .prepare(
+          `SELECT c.* FROM conversations c
+           JOIN conversations_fts fts ON c.id = fts.id
+           WHERE conversations_fts MATCH ?
+           ORDER BY rank`
+        )
+        .all(query) as any[];
 
-    return rows.map(row => ({
-      id: row.id,
-      title: row.title,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      provider: row.provider,
-      model: row.model,
-      messages: [],
-      metadata: JSON.parse(row.metadata || '{}'),
-    }));
+      return rows.map(row => ({
+        id: row.id,
+        title: row.title,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+        provider: row.provider,
+        model: row.model,
+        messages: [],
+        metadata: JSON.parse(row.metadata || '{}'),
+      }));
+    } catch (error) {
+      throw new Error(`Failed to search conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   close(): void {

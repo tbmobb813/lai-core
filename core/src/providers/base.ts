@@ -7,7 +7,7 @@ export interface Provider {
   currentModel: string;
   
   complete(options: ProviderCompletionOptions): Promise<ProviderResponse>;
-  stream(options: ProviderCompletionOptions): AsyncGenerator<string>;
+  stream(options: ProviderCompletionOptions): Promise<AsyncGenerator<string>>;
   listModels(): Promise<string[]>;
   validateConfig(): Promise<boolean>;
 }
