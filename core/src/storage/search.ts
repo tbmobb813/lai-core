@@ -16,10 +16,13 @@ export class SearchEngine {
     this.db = new Database(storagePath);
   }
 
-  async searchAll(query: string, options?: {
-    limit?: number;
-    includeMessages?: boolean;
-  }): Promise<SearchResult[]> {
+  async searchAll(
+    query: string,
+    options?: {
+      limit?: number;
+      includeMessages?: boolean;
+    }
+  ): Promise<SearchResult[]> {
     const limit = options?.limit || 50;
     const results: SearchResult[] = [];
 

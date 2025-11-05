@@ -29,7 +29,7 @@ class OllamaProvider {
             const error = await response.text();
             throw new Error(`Ollama API error: ${response.status} - ${error}`);
         }
-        const data = await response.json();
+        const data = (await response.json());
         return {
             content: data.response,
             tokensUsed: data.eval_count,
@@ -94,7 +94,7 @@ class OllamaProvider {
         if (!response.ok) {
             throw new Error(`Failed to list models: ${response.status}`);
         }
-        const data = await response.json();
+        const data = (await response.json());
         return data.models?.map((model) => model.name) || [];
     }
     async validateConfig() {

@@ -11,7 +11,7 @@ const migrations: Migration[] = [
   {
     version: 1,
     name: 'initial_schema',
-    up: (db) => {
+    up: db => {
       db.exec(`
         CREATE TABLE IF NOT EXISTS conversations (
           id TEXT PRIMARY KEY,
@@ -55,7 +55,7 @@ const migrations: Migration[] = [
   {
     version: 2,
     name: 'add_fts_indexes',
-    up: (db) => {
+    up: db => {
       db.exec(`
         CREATE VIRTUAL TABLE IF NOT EXISTS conversations_fts 
           USING fts5(id, title, content='conversations', content_rowid='rowid');
@@ -80,9 +80,7 @@ export function runMigrations(storagePath: string): void {
   `);
 
   // Get current version
-  const currentVersion = db
-    .prepare('SELECT MAX(version) as version FROM migrations')
-    .get() as any;
+  const currentVersion = db.prepare('SELECT MAX(version) as version FROM migrations').get() as any;
 
   const version = currentVersion?.version || 0;
 
@@ -90,14 +88,16 @@ export function runMigrations(storagePath: string): void {
   for (const migration of migrations) {
     if (migration.version > version) {
       console.log(`Running migration: ${migration.name}`);
-      
+
       try {
         migration.up(db);
-        
-        db.prepare(
-          'INSERT INTO migrations (version, name, applied_at) VALUES (?, ?, ?)'
-        ).run(migration.version, migration.name, Date.now());
-        
+
+        db.prepare('INSERT INTO migrations (version, name, applied_at) VALUES (?, ?, ?)').run(
+          migration.version,
+          migration.name,
+          Date.now()
+        );
+
         console.log(`Migration ${migration.name} completed`);
       } catch (error) {
         console.error(`Migration ${migration.name} failed:`, error);

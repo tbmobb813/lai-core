@@ -32,7 +32,7 @@ class GeminiProvider {
             const error = await response.text();
             throw new Error(`Gemini API error: ${response.status} - ${error}`);
         }
-        const data = await response.json();
+        const data = (await response.json());
         const candidate = data.candidates[0];
         return {
             content: candidate.content.parts[0].text,
@@ -98,7 +98,7 @@ class GeminiProvider {
         if (!response.ok) {
             throw new Error(`Failed to list models: ${response.status}`);
         }
-        const data = await response.json();
+        const data = (await response.json());
         return data.models
             .filter((model) => model.name.includes('gemini'))
             .map((model) => model.name.split('/').pop())

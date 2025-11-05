@@ -5,14 +5,14 @@ import type { Provider } from './providers/base';
 import { ConversationStore, MessageStore } from './storage';
 import { ContextBuilder } from './context';
 import { PrivacyController } from './privacy';
-import type { 
-  CompletionOptions, 
-  StreamOptions, 
-  ProviderConfig, 
+import type {
+  CompletionOptions,
+  StreamOptions,
+  ProviderConfig,
   PrivacySettings,
   Conversation,
   ContextOptions,
-  ProviderType
+  ProviderType,
 } from './types';
 
 export class AIClient {
@@ -84,7 +84,7 @@ export class AIClient {
   async *stream(options: StreamOptions): AsyncGenerator<string> {
     // Similar to complete but yields chunks
     const stream = await this.provider.stream(options);
-    
+
     let fullResponse = '';
     for await (const chunk of stream) {
       fullResponse += chunk;
@@ -109,19 +109,19 @@ export class AIClient {
 
   async withContext(prompt: string, contextOptions: ContextOptions): Promise<string> {
     let builder = this.contextBuilder;
-    
+
     if (contextOptions.files) {
       builder = builder.addFiles(contextOptions.files);
     }
-    
+
     if (contextOptions.gitRepo) {
       builder = builder.addGitContext(contextOptions.gitRepo);
     }
-    
+
     if (contextOptions.workspace) {
       builder = builder.addWorkspace(contextOptions.workspace);
     }
-    
+
     const context = await builder.build();
 
     return this.complete({ prompt, context });

@@ -18,7 +18,7 @@ export function parseSSEChunk(chunk: string): string | null {
   for (const line of lines) {
     if (line.startsWith('data: ')) {
       const data = line.slice(6);
-      
+
       // Skip [DONE] markers
       if (data === '[DONE]') {
         return null;
@@ -27,12 +27,12 @@ export function parseSSEChunk(chunk: string): string | null {
       // Try to parse as JSON
       try {
         const parsed = JSON.parse(data);
-        
+
         // OpenAI format
         if (parsed.choices?.[0]?.delta?.content) {
           return parsed.choices[0].delta.content;
         }
-        
+
         // Anthropic format
         if (parsed.delta?.text) {
           return parsed.delta.text;
@@ -68,7 +68,7 @@ export function parseJSONChunk(chunk: string): string | null {
 
   try {
     const parsed = JSON.parse(chunk);
-    
+
     // OpenAI streaming format
     if (parsed.choices?.[0]?.delta?.content) {
       return parsed.choices[0].delta.content;

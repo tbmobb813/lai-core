@@ -21,9 +21,7 @@ class SettingsStore {
     `);
     }
     async get(key, defaultValue) {
-        const row = this.db
-            .prepare('SELECT value FROM settings WHERE key = ?')
-            .get(key);
+        const row = this.db.prepare('SELECT value FROM settings WHERE key = ?').get(key);
         if (!row) {
             return defaultValue;
         }

@@ -15,7 +15,7 @@ describe('MessageStore', () => {
     }
     messageStore = new MessageStore(TEST_DB);
     conversationStore = new ConversationStore(TEST_DB);
-    
+
     conversationId = await conversationStore.create({
       title: 'Test Conversation',
       provider: 'openai',

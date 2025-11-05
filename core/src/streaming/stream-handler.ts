@@ -39,14 +39,14 @@ export class StreamHandler {
   private async handleAsyncGenerator(stream: AsyncGenerator<string>): Promise<string> {
     for await (const chunk of stream) {
       this.buffer.append(chunk);
-      
+
       if (this.options.onChunk) {
         this.options.onChunk(chunk);
       }
     }
 
     const fullResponse = this.buffer.toString();
-    
+
     if (this.options.onComplete) {
       this.options.onComplete(fullResponse);
     }
@@ -75,7 +75,7 @@ export class StreamHandler {
 
         for (const chunk of chunks) {
           this.buffer.append(chunk);
-          
+
           if (this.options.onChunk) {
             this.options.onChunk(chunk);
           }
@@ -87,7 +87,7 @@ export class StreamHandler {
         const chunk = this.extractChunk(buffer, format);
         if (chunk) {
           this.buffer.append(chunk);
-          
+
           if (this.options.onChunk) {
             this.options.onChunk(chunk);
           }
@@ -95,7 +95,7 @@ export class StreamHandler {
       }
 
       const fullResponse = this.buffer.toString();
-      
+
       if (this.options.onComplete) {
         this.options.onComplete(fullResponse);
       }

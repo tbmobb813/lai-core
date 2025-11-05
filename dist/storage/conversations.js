@@ -62,9 +62,7 @@ class ConversationStore {
     }
     async get(id) {
         try {
-            const row = this.db
-                .prepare('SELECT * FROM conversations WHERE id = ?')
-                .get(id);
+            const row = this.db.prepare('SELECT * FROM conversations WHERE id = ?').get(id);
             if (!row) {
                 throw new Error(`Conversation ${id} not found`);
             }
@@ -98,9 +96,7 @@ class ConversationStore {
             updates.push('updated_at = ?');
             values.push(Date.now());
             values.push(id);
-            this.db
-                .prepare(`UPDATE conversations SET ${updates.join(', ')} WHERE id = ?`)
-                .run(...values);
+            this.db.prepare(`UPDATE conversations SET ${updates.join(', ')} WHERE id = ?`).run(...values);
         }
         catch (error) {
             throw new Error(`Failed to update conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);

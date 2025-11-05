@@ -25,7 +25,7 @@ export class ProviderFactory {
 
   static async detectAvailable(): Promise<ProviderType[]> {
     const available: ProviderType[] = [];
-    
+
     // Check Ollama
     try {
       const ollama = new OllamaProvider({ type: 'ollama' });

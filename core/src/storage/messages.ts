@@ -81,15 +81,15 @@ export class MessageStore {
 
       return id;
     } catch (error) {
-      throw new Error(`Failed to create message: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to create message: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
   async get(id: string): Promise<Message> {
     try {
-      const row = this.db
-        .prepare('SELECT * FROM messages WHERE id = ?')
-        .get(id) as any;
+      const row = this.db.prepare('SELECT * FROM messages WHERE id = ?').get(id) as any;
 
       if (!row) {
         throw new Error(`Message ${id} not found`);
@@ -105,7 +105,9 @@ export class MessageStore {
         context: row.context ? JSON.parse(row.context) : undefined,
       };
     } catch (error) {
-      throw new Error(`Failed to get message: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to get message: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -129,7 +131,9 @@ export class MessageStore {
         context: row.context ? JSON.parse(row.context) : undefined,
       }));
     } catch (error) {
-      throw new Error(`Failed to get messages by conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to get messages by conversation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -137,17 +141,19 @@ export class MessageStore {
     try {
       this.db.prepare('DELETE FROM messages WHERE id = ?').run(id);
     } catch (error) {
-      throw new Error(`Failed to delete message: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to delete message: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
   async deleteByConversation(conversationId: string): Promise<void> {
     try {
-      this.db
-        .prepare('DELETE FROM messages WHERE conversation_id = ?')
-        .run(conversationId);
+      this.db.prepare('DELETE FROM messages WHERE conversation_id = ?').run(conversationId);
     } catch (error) {
-      throw new Error(`Failed to delete messages by conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to delete messages by conversation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -179,7 +185,9 @@ export class MessageStore {
         context: row.context ? JSON.parse(row.context) : undefined,
       }));
     } catch (error) {
-      throw new Error(`Failed to search messages: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to search messages: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

@@ -43,7 +43,7 @@ export class AnthropicProvider implements Provider {
       throw new Error(`Anthropic API error: ${response.status} - ${error}`);
     }
 
-    const data = await response.json() as {
+    const data = (await response.json()) as {
       content: Array<{ text: string }>;
       usage?: { input_tokens: number; output_tokens: number };
       model: string;
@@ -104,7 +104,7 @@ export class AnthropicProvider implements Provider {
       for (const line of lines) {
         if (line.startsWith('data: ')) {
           const data = line.slice(6);
-          
+
           try {
             const parsed = JSON.parse(data);
             if (parsed.type === 'content_block_delta' && parsed.delta?.text) {

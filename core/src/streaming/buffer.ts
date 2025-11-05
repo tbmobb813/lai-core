@@ -9,7 +9,7 @@ export class ResponseBuffer {
 
   append(chunk: string): void {
     this.chunks.push(chunk);
-    
+
     // Check if we've exceeded max size
     if (this.getSize() > this.maxSize) {
       throw new Error(`Buffer exceeded maximum size of ${this.maxSize} bytes`);

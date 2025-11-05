@@ -74,15 +74,15 @@ export class ConversationStore {
 
       return id;
     } catch (error) {
-      throw new Error(`Failed to create conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to create conversation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
   async get(id: string): Promise<Conversation> {
     try {
-      const row = this.db
-        .prepare('SELECT * FROM conversations WHERE id = ?')
-        .get(id) as any;
+      const row = this.db.prepare('SELECT * FROM conversations WHERE id = ?').get(id) as any;
 
       if (!row) {
         throw new Error(`Conversation ${id} not found`);
@@ -99,11 +99,16 @@ export class ConversationStore {
         metadata: JSON.parse(row.metadata || '{}'),
       };
     } catch (error) {
-      throw new Error(`Failed to get conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to get conversation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
-  async update(id: string, data: Partial<{ title: string; metadata: Record<string, any> }>): Promise<void> {
+  async update(
+    id: string,
+    data: Partial<{ title: string; metadata: Record<string, any> }>
+  ): Promise<void> {
     try {
       const updates: string[] = [];
       const values: any[] = [];
@@ -123,11 +128,11 @@ export class ConversationStore {
 
       values.push(id);
 
-      this.db
-        .prepare(`UPDATE conversations SET ${updates.join(', ')} WHERE id = ?`)
-        .run(...values);
+      this.db.prepare(`UPDATE conversations SET ${updates.join(', ')} WHERE id = ?`).run(...values);
     } catch (error) {
-      throw new Error(`Failed to update conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to update conversation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -135,7 +140,9 @@ export class ConversationStore {
     try {
       this.db.prepare('DELETE FROM conversations WHERE id = ?').run(id);
     } catch (error) {
-      throw new Error(`Failed to delete conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to delete conversation: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -163,7 +170,9 @@ export class ConversationStore {
         metadata: JSON.parse(row.metadata || '{}'),
       }));
     } catch (error) {
-      throw new Error(`Failed to list conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to list conversations: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 
@@ -189,7 +198,9 @@ export class ConversationStore {
         metadata: JSON.parse(row.metadata || '{}'),
       }));
     } catch (error) {
-      throw new Error(`Failed to search conversations: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to search conversations: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

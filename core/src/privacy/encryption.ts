@@ -21,7 +21,7 @@ export class ConversationEncryption {
   async encrypt(data: string, password: string): Promise<string> {
     const salt = randomBytes(16);
     const iv = randomBytes(16);
-    
+
     const key = (await scryptAsync(password, salt, this.keyLength)) as Buffer;
     const cipher = createCipheriv(this.algorithm, key, iv);
 
@@ -44,17 +44,9 @@ export class ConversationEncryption {
   async decrypt(encryptedData: string, password: string): Promise<string> {
     const { salt, iv, authTag, encrypted } = JSON.parse(encryptedData);
 
-    const key = (await scryptAsync(
-      password,
-      Buffer.from(salt, 'hex'),
-      this.keyLength
-    )) as Buffer;
+    const key = (await scryptAsync(password, Buffer.from(salt, 'hex'), this.keyLength)) as Buffer;
 
-    const decipher = createDecipheriv(
-      this.algorithm,
-      key,
-      Buffer.from(iv, 'hex')
-    );
+    const decipher = createDecipheriv(this.algorithm, key, Buffer.from(iv, 'hex'));
 
     (decipher as any).setAuthTag(Buffer.from(authTag, 'hex'));
 
@@ -66,7 +58,7 @@ export class ConversationEncryption {
 
   async encryptConversation(conversation: any, password: string): Promise<any> {
     const encrypted = { ...conversation };
-    
+
     // Encrypt messages
     if (conversation.messages && Array.isArray(conversation.messages)) {
       encrypted.messages = await Promise.all(
@@ -79,7 +71,7 @@ export class ConversationEncryption {
 
     // Mark as encrypted
     encrypted.encrypted = true;
-    
+
     return encrypted;
   }
 
@@ -89,7 +81,7 @@ export class ConversationEncryption {
     }
 
     const decrypted = { ...encryptedConversation };
-    
+
     // Decrypt messages
     if (encryptedConversation.messages && Array.isArray(encryptedConversation.messages)) {
       decrypted.messages = await Promise.all(
@@ -101,7 +93,7 @@ export class ConversationEncryption {
     }
 
     delete decrypted.encrypted;
-    
+
     return decrypted;
   }
 }

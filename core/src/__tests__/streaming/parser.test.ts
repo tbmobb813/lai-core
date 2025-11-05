@@ -4,7 +4,7 @@ describe('SSE Parser', () => {
   test('should parse OpenAI-style SSE chunk', () => {
     const chunk = 'data: {"choices":[{"delta":{"content":"Hello"}}]}\n\n';
     const result = parseSSEChunk(chunk);
-    
+
     expect(result).toBeDefined();
     expect(result).toBe('Hello');
   });
@@ -12,7 +12,7 @@ describe('SSE Parser', () => {
   test('should handle data prefix with plain text', () => {
     const chunk = 'data: test content\n\n';
     const result = parseSSEChunk(chunk);
-    
+
     expect(result).toBe('test content');
   });
 
@@ -29,21 +29,21 @@ describe('SSE Parser', () => {
   test('should parse Anthropic-style SSE', () => {
     const chunk = 'data: {"delta":{"text":"Hi"}}\n\n';
     const result = parseSSEChunk(chunk);
-    
+
     expect(result).toBe('Hi');
   });
 
   test('should handle [DONE] marker', () => {
     const chunk = 'data: [DONE]\n\n';
     const result = parseSSEChunk(chunk);
-    
+
     expect(result).toBeNull();
   });
 
   test('should parse generic text field', () => {
     const chunk = 'data: {"text":"Test message"}\n\n';
     const result = parseSSEChunk(chunk);
-    
+
     expect(result).toBe('Test message');
   });
 });

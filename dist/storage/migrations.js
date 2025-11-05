@@ -10,7 +10,7 @@ const migrations = [
     {
         version: 1,
         name: 'initial_schema',
-        up: (db) => {
+        up: db => {
             db.exec(`
         CREATE TABLE IF NOT EXISTS conversations (
           id TEXT PRIMARY KEY,
@@ -54,7 +54,7 @@ const migrations = [
     {
         version: 2,
         name: 'add_fts_indexes',
-        up: (db) => {
+        up: db => {
             db.exec(`
         CREATE VIRTUAL TABLE IF NOT EXISTS conversations_fts 
           USING fts5(id, title, content='conversations', content_rowid='rowid');
@@ -76,9 +76,7 @@ function runMigrations(storagePath) {
     );
   `);
     // Get current version
-    const currentVersion = db
-        .prepare('SELECT MAX(version) as version FROM migrations')
-        .get();
+    const currentVersion = db.prepare('SELECT MAX(version) as version FROM migrations').get();
     const version = currentVersion?.version || 0;
     // Run pending migrations
     for (const migration of migrations) {

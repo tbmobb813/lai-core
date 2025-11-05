@@ -73,9 +73,7 @@ class AuditLogger {
     }
     async clear(beforeDate) {
         if (beforeDate) {
-            this.db
-                .prepare('DELETE FROM audit_log WHERE timestamp < ?')
-                .run(beforeDate);
+            this.db.prepare('DELETE FROM audit_log WHERE timestamp < ?').run(beforeDate);
         }
         else {
             this.db.prepare('DELETE FROM audit_log').run();

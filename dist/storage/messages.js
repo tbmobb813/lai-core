@@ -66,9 +66,7 @@ class MessageStore {
     }
     async get(id) {
         try {
-            const row = this.db
-                .prepare('SELECT * FROM messages WHERE id = ?')
-                .get(id);
+            const row = this.db.prepare('SELECT * FROM messages WHERE id = ?').get(id);
             if (!row) {
                 throw new Error(`Message ${id} not found`);
             }
@@ -117,9 +115,7 @@ class MessageStore {
     }
     async deleteByConversation(conversationId) {
         try {
-            this.db
-                .prepare('DELETE FROM messages WHERE conversation_id = ?')
-                .run(conversationId);
+            this.db.prepare('DELETE FROM messages WHERE conversation_id = ?').run(conversationId);
         }
         catch (error) {
             throw new Error(`Failed to delete messages by conversation: ${error instanceof Error ? error.message : 'Unknown error'}`);

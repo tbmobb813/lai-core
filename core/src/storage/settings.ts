@@ -20,9 +20,7 @@ export class SettingsStore {
   }
 
   async get<T = any>(key: string, defaultValue?: T): Promise<T | undefined> {
-    const row = this.db
-      .prepare('SELECT value FROM settings WHERE key = ?')
-      .get(key) as any;
+    const row = this.db.prepare('SELECT value FROM settings WHERE key = ?').get(key) as any;
 
     if (!row) {
       return defaultValue;

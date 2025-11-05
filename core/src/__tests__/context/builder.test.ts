@@ -32,7 +32,7 @@ describe('ContextBuilder', () => {
   test('should add files', async () => {
     const builder = new ContextBuilder();
     builder.addFiles([testFile]);
-    
+
     const context = await builder.build();
     expect(context.files).toBeDefined();
     expect(context.files?.length).toBe(1);
@@ -43,7 +43,7 @@ describe('ContextBuilder', () => {
   test('should detect file language', async () => {
     const builder = new ContextBuilder();
     builder.addFiles([testFile]);
-    
+
     const context = await builder.build();
     expect(context.files?.[0].language).toBe('typescript');
   });
@@ -51,7 +51,7 @@ describe('ContextBuilder', () => {
   test('should add workspace context', async () => {
     const builder = new ContextBuilder();
     builder.addWorkspace(testDir);
-    
+
     const context = await builder.build();
     expect(context.workspace).toBeDefined();
     expect(context.workspace?.path).toBe(testDir);
@@ -60,7 +60,7 @@ describe('ContextBuilder', () => {
   test('should build context', async () => {
     const builder = new ContextBuilder();
     builder.addFiles([testFile]);
-    
+
     const context = await builder.build();
     expect(context).toBeDefined();
     expect(typeof context).toBe('object');
@@ -69,7 +69,7 @@ describe('ContextBuilder', () => {
   test('should handle empty builder', async () => {
     const builder = new ContextBuilder();
     const context = await builder.build();
-    
+
     expect(context).toBeDefined();
     expect(typeof context).toBe('object');
   });

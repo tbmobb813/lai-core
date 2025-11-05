@@ -17,7 +17,7 @@ class OpenAIProvider {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.apiKey}`,
+                Authorization: `Bearer ${this.apiKey}`,
             },
             body: JSON.stringify({
                 model: options.model || this.currentModel,
@@ -31,7 +31,7 @@ class OpenAIProvider {
             const error = await response.text();
             throw new Error(`OpenAI API error: ${response.status} - ${error}`);
         }
-        const data = await response.json();
+        const data = (await response.json());
         return {
             content: data.choices[0].message.content,
             tokensUsed: data.usage?.total_tokens,
@@ -47,7 +47,7 @@ class OpenAIProvider {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.apiKey}`,
+                Authorization: `Bearer ${this.apiKey}`,
             },
             body: JSON.stringify({
                 model: options.model || this.currentModel,
@@ -97,13 +97,13 @@ class OpenAIProvider {
     async listModels() {
         const response = await fetch(`${this.baseUrl}/models`, {
             headers: {
-                'Authorization': `Bearer ${this.apiKey}`,
+                Authorization: `Bearer ${this.apiKey}`,
             },
         });
         if (!response.ok) {
             throw new Error(`Failed to list models: ${response.status}`);
         }
-        const data = await response.json();
+        const data = (await response.json());
         return data.data
             .filter((model) => model.id.startsWith('gpt'))
             .map((model) => model.id)

@@ -5,7 +5,7 @@ import type { ProviderType, AIContext } from '../types';
 export interface Provider {
   type: ProviderType;
   currentModel: string;
-  
+
   complete(options: ProviderCompletionOptions): Promise<ProviderResponse>;
   stream(options: ProviderCompletionOptions): Promise<AsyncGenerator<string>>;
   listModels(): Promise<string[]>;

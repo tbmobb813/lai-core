@@ -33,7 +33,7 @@ class AnthropicProvider {
             const error = await response.text();
             throw new Error(`Anthropic API error: ${response.status} - ${error}`);
         }
-        const data = await response.json();
+        const data = (await response.json());
         return {
             content: data.content[0].text,
             tokensUsed: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0),

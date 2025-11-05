@@ -94,9 +94,7 @@ export class AuditLogger {
 
   async clear(beforeDate?: number): Promise<void> {
     if (beforeDate) {
-      this.db
-        .prepare('DELETE FROM audit_log WHERE timestamp < ?')
-        .run(beforeDate);
+      this.db.prepare('DELETE FROM audit_log WHERE timestamp < ?').run(beforeDate);
     } else {
       this.db.prepare('DELETE FROM audit_log').run();
     }

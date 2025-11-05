@@ -25,7 +25,7 @@ export class OpenAIProvider implements Provider {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
       },
       body: JSON.stringify({
         model: options.model || this.currentModel,
@@ -41,7 +41,7 @@ export class OpenAIProvider implements Provider {
       throw new Error(`OpenAI API error: ${response.status} - ${error}`);
     }
 
-    const data = await response.json() as {
+    const data = (await response.json()) as {
       choices: Array<{ message: { content: string }; finish_reason: string }>;
       usage?: { total_tokens: number };
       model: string;
@@ -63,7 +63,7 @@ export class OpenAIProvider implements Provider {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
       },
       body: JSON.stringify({
         model: options.model || this.currentModel,
@@ -118,7 +118,7 @@ export class OpenAIProvider implements Provider {
   async listModels(): Promise<string[]> {
     const response = await fetch(`${this.baseUrl}/models`, {
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
       },
     });
 
@@ -126,7 +126,7 @@ export class OpenAIProvider implements Provider {
       throw new Error(`Failed to list models: ${response.status}`);
     }
 
-    const data = await response.json() as { data: Array<{ id: string }> };
+    const data = (await response.json()) as { data: Array<{ id: string }> };
     return data.data
       .filter((model: any) => model.id.startsWith('gpt'))
       .map((model: any) => model.id)
@@ -152,7 +152,7 @@ export class OpenAIProvider implements Provider {
     // Add context if provided
     if (options.context) {
       let contextContent = '';
-      
+
       if (options.context.files && options.context.files.length > 0) {
         contextContent += '\n\n## Relevant Files:\n';
         for (const file of options.context.files) {
