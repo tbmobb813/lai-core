@@ -108,11 +108,21 @@ export class AIClient {
   }
 
   async withContext(prompt: string, contextOptions: ContextOptions): Promise<string> {
-    const context = await this.contextBuilder
-      .addFiles(contextOptions.files)
-      .addGitContext(contextOptions.gitRepo)
-      .addWorkspace(contextOptions.workspace)
-      .build();
+    let builder = this.contextBuilder;
+    
+    if (contextOptions.files) {
+      builder = builder.addFiles(contextOptions.files);
+    }
+    
+    if (contextOptions.gitRepo) {
+      builder = builder.addGitContext(contextOptions.gitRepo);
+    }
+    
+    if (contextOptions.workspace) {
+      builder = builder.addWorkspace(contextOptions.workspace);
+    }
+    
+    const context = await builder.build();
 
     return this.complete({ prompt, context });
   }
