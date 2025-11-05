@@ -9,26 +9,26 @@ importers:
   .:
     dependencies:
       better-sqlite3:
-        specifier: ^9.0.0
-        version: 9.6.0
+        specifier: ^12.4.1
+        version: 12.4.1
       node-fetch:
-        specifier: ^3.3.0
+        specifier: ^3.3.2
         version: 3.3.2
     devDependencies:
       '@types/better-sqlite3':
-        specifier: ^7.6.8
+        specifier: ^7.6.13
         version: 7.6.13
       '@types/node':
-        specifier: ^20.0.0
+        specifier: ^20.19.24
         version: 20.19.24
       eslint:
-        specifier: ^8.55.0
+        specifier: ^8.57.1
         version: 8.57.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.19.24)
       typescript:
-        specifier: ^5.3.0
+        specifier: ^5.9.3
         version: 5.9.3
 
 packages:
@@ -456,8 +456,9 @@ packages:
     resolution: {integrity: sha512-uUhTRDPXamakPyghwrUcjaGvvBqGrWvBHReoiULMIpOJVM9IYzQh83Xk2Onx5HlGI2o10NNCzcs9TG/S3TkwrQ==}
     hasBin: true
 
-  better-sqlite3@9.6.0:
-    resolution: {integrity: sha512-yR5HATnqeYNVnkaUTf4bOP2dJSnyhP4puJN/QPRyx4YkBEEUxib422n2XzPqDEHjQQqazoYoADdAm5vE15+dAQ==}
+  better-sqlite3@12.4.1:
+    resolution: {integrity: sha512-3yVdyZhklTiNrtg+4WqHpJpFDd+WHTg2oM7UcR80GqL05AOV0xEJzc6qNvFYoEtE+hRp1n9MpN6/+4yhlGkDXQ==}
+    engines: {node: 20.x || 22.x || 23.x || 24.x}
 
   bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
@@ -2094,7 +2095,7 @@ snapshots:
 
   baseline-browser-mapping@2.8.24: {}
 
-  better-sqlite3@9.6.0:
+  better-sqlite3@12.4.1:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.3
