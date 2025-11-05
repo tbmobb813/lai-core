@@ -4,7 +4,8 @@ import { OpenAIProvider } from './openai';
 import { AnthropicProvider } from './anthropic';
 import { GeminiProvider } from './gemini';
 import { OllamaProvider } from './ollama';
-import type { Provider, ProviderConfig } from './base';
+import type { Provider, ProviderType } from './base';
+import type { ProviderConfig } from '../types';
 
 export class ProviderFactory {
   static create(config: ProviderConfig): Provider {

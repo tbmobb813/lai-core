@@ -43,10 +43,15 @@ export class AnthropicProvider implements Provider {
       throw new Error(`Anthropic API error: ${response.status} - ${error}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as {
+      content: Array<{ text: string }>;
+      usage?: { input_tokens: number; output_tokens: number };
+      model: string;
+      stop_reason: string;
+    };
     return {
       content: data.content[0].text,
-      tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens,
+      tokensUsed: (data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0),
       model: data.model,
       finishReason: data.stop_reason,
     };

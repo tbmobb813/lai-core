@@ -45,7 +45,13 @@ export class GeminiProvider implements Provider {
       throw new Error(`Gemini API error: ${response.status} - ${error}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as {
+      candidates: Array<{
+        content: { parts: Array<{ text: string }> };
+        finishReason: string;
+      }>;
+      usageMetadata?: { totalTokenCount: number };
+    };
     const candidate = data.candidates[0];
     
     return {
@@ -124,7 +130,7 @@ export class GeminiProvider implements Provider {
       throw new Error(`Failed to list models: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { models: Array<{ name: string }> };
     return data.models
       .filter((model: any) => model.name.includes('gemini'))
       .map((model: any) => model.name.split('/').pop())

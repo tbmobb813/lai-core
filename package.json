@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p core/tsconfig.json",
     "test": "jest",
-    "lint": "eslint src/**/*.ts",
+    "lint": "eslint core/src/**/*.ts",
     "prepublishOnly": "pnpm build"
   },
   "keywords": [

@@ -37,7 +37,12 @@ export class OllamaProvider implements Provider {
       throw new Error(`Ollama API error: ${response.status} - ${error}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as {
+      response: string;
+      eval_count?: number;
+      model: string;
+      done: boolean;
+    };
     return {
       content: data.response,
       tokensUsed: data.eval_count,
@@ -111,7 +116,7 @@ export class OllamaProvider implements Provider {
       throw new Error(`Failed to list models: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { models?: Array<{ name: string }> };
     return data.models?.map((model: any) => model.name) || [];
   }
 
