@@ -3,6 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
+import type { AIContext, FileContext, FileChange, ProjectStructure } from '../types';
 
 export class ContextBuilder {
   private context: AIContext = {};

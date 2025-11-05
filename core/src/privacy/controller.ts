@@ -1,5 +1,8 @@
 // @lai/core/src/privacy/controller.ts
 
+import type { PrivacySettings, AIRequest, AuditLogOptions } from '../types';
+import { AuditLogger } from './audit';
+
 export class PrivacyController {
   private settings: PrivacySettings;
   private auditLogger?: AuditLogger;

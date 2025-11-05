@@ -1,5 +1,7 @@
 // @lai/core/src/providers/base.ts
 
+import type { ProviderType, AIContext } from '../types';
+
 export interface Provider {
   type: ProviderType;
   currentModel: string;
@@ -25,3 +27,5 @@ export interface ProviderResponse {
   model: string;
   finishReason?: string;
 }
+
+export { ProviderType } from '../types';

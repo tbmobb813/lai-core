@@ -1,10 +1,19 @@
 // @lai/core/src/client.ts
 
 import { ProviderFactory } from './providers';
+import type { Provider } from './providers/base';
 import { ConversationStore, MessageStore } from './storage';
 import { ContextBuilder } from './context';
 import { PrivacyController } from './privacy';
-import type { CompletionOptions, StreamOptions, ProviderConfig } from './types';
+import type { 
+  CompletionOptions, 
+  StreamOptions, 
+  ProviderConfig, 
+  PrivacySettings,
+  Conversation,
+  ContextOptions,
+  ProviderType
+} from './types';
 
 export class AIClient {
   private provider: Provider;
